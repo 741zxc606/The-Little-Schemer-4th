@@ -1,0 +1,10 @@
+; Chapter 1
+
+; Examples of atom
+
+'atom
+(quote atom)
+'turkey
+1492
+'*abc$
+(quote *abc$)
