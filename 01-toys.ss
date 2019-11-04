@@ -127,12 +127,12 @@
 ;
 (define atom?
   (lambda (x)
-    (and (not (pair？ x))(not(null? x)))))    ; pair or 'pair?
+    (and (not (pair? x))(not(null? x)))))    ; pair or 'pair?
 
 ; Examples of atom?
 ;
 (atom? 'Harry)        ; true
-(atom? (Harry had a heap of apples))    ; false
+(atom? '(Harry had a heap of apples))    ; false
 
 ; Examples of atom?, car and cdr
 ;
