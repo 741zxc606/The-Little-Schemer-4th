@@ -143,30 +143,29 @@
 (atom? (car (cdr'(swing(low sweet) cherry oat))))    ; false
 
 ; Examples of eq?
-;
-(eq? 'Harry 'Harry)        ; true
-(eq? 'margarine 'butter)   ; false
 
-; Examples of not-applicable eq?
-;
-; (eq? '() '(strawberry))        ; not-applicable because eq? works only on atoms
-; (eq? 5 6)                      ; not-applicable because eq? works only on non-numeric atoms
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; The law of eq?                                              ;
-;                                                             ;
-; The primitive /eq?/ takes two arguments.                    ;
-; Each must be a non-numeric atom.                            ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Examples of eq?, car and cdr
-;
-(eq? (car '(Mary had a little lamb chop)) 'Mary)        ; true
-(eq? (car '(beans beans)) (car (cdr '(beans beans))))   ; true
 
-; Examples of not-applicable eq?, car and cdr
-;
-; (eq? (cdr '(sound milk)) 'milk)                       ; not-applicable because (cdr '(...)) is a list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
