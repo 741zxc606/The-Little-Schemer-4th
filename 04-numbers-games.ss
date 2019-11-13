@@ -171,17 +171,177 @@
 (o< 8 3)    ; #f
 (o< 6 6)    ; #f
 
+; The o= function compares n with m and returns true if n=m
+;
+(define o=
+  (lambda (n m)
+    (cond
+      ((o> n m) #f)
+      ((o< n m) #f)
+      (else #t))))
 
+; Examples of o=
+;
+(o= 5 5)    ; #t
+(o= 1 2)    ; #f
 
+; The o^ function computes n^m
+;
+(define o^
+  (lambda (n m)
+    (cond
+      ((zero? m)1)
+      (else (o* n(o^ n(sub1 m)))))))
 
+; Examples of o^
+;
+(o^ 1 1)    ; 1
+(o^ 2 3)    ; 8
+(o^ 5 3)    ; 125
 
+; The o/ function computes the integer part of n/m
+;
+(define o/
+  (lambda (n m)
+    (cond
+      ((o< n m)0)
+      (else (add1 (o/ (o- n m) m))))))
 
+; Example of o/
+;
+(o/ 15 4)        ; 3
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                                                                      ;
+;        Wouldn't a '(ham and cheese on rye) be good right now?        ;
+;                                                                      ;
+;                       Don't forget the 'mustard!                     ;
+;                                                                      ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; The olength function finds the length of a lat
+;
+(define olength
+  (lambda (lat)
+    (cond
+      ((null? lat)0)
+      (else (add1 (olength (cdr lat)))))))
 
+; Examples of olength
+;
+(olength '(htodogs with mustard sauerkraut and pickles))    ; 6
+(olength '(ham and cheese on rye))                          ; 5
 
+; The pick function returns the n-th element in a lat
+;
+(define pick
+  (lambda (n lat)
+    (cond
+      ((zero? (sub1 n)) (car lat))
+      (else
+       (pick (sub1 n) (cdr lat))))))
 
+; Example of pick
+;
+(pick 4 '(lasagna spaghetti ravioli macaroni meatball))    ; macaroni
 
+; the rempick function removes the n-th element and returns the new lat
+;
+(define rempick
+  (lambda (n lat)
+    (cond
+      ((zero? (sub1 n))(cdr lat))
+      (else
+       (cons (car lat)(rempick (sub1 n)(cdr lat)))))))
+
+; Example of rempick
+;
+(rempick 3 '(hotdogs with hot mustard))    ; '(hotdogs with mustard)
+
+; The no-nums function returns a new lat with all numbers removed
+;
+(define no-nums
+  (lambda(lat)
+    (cond
+      ((null? lat) '())
+      ((number? (car lat))(no-nums (cdr lat)))
+      (else
+       (cons (car lat)(no-nums (cdr lat)))))))
+
+; Example of no-nums
+;
+(no-nums '(5 pears 6 prunes 9 dates))    ; '(pears prunes dates)
+
+; The all-nums does the oppssite of no-nums - returns a new lat with only numbers
+;
+(define all-nums
+  (lambda (lat)
+    (cond
+      ((null? lat) '())
+      ((number? (car lat))(cons (car lat)(all-nums (cdr lat))))
+      (else
+       (all-nums(cdr lat))))))
+
+; Example of all-nums;
+;
+(all-nums '(5 pears 6 prunes 9 dates))    ; '(5 6 9)
+
+; The eqan? function determines whether two arguments are the same
+; It use eq? for atoms and = for numbers
+;
+(define eqan?
+  (lambda (a1 a2)
+    (cond
+      ((and (number? a1)(number? a2))(= a1 a2))
+      ((or  (number? a1)(number? a2)) #f)
+      (else
+       (eq? a1 a2)))))
+
+; Examples of eqan?
+;
+(eqan? 3 3)    ; #t
+(eqan? 3 4)    ; #f
+(eqan? 'a 'a)  ; #t
+(eqan? 'a 'b)  ; #f
+
+; The occur function counts the number of times an atom appears in a list
+;
+(define occur
+  (lambda (a lat)
+    (cond
+      ((null? lat)0)
+      ((eq? (car lat) a)
+       (add1 (occur a(cdr lat))))
+      (else
+       (occur a (cdr lat))))))
+
+; Examples of occur
+;
+(occur 'x '(a b x x c d x))    ; 3
+(occur 'x '())                 ; 0
+
+; The one? function is true when n=1
+;
+(define one?
+  (lambda (n)(= n 1)))
+
+; Examples of one?
+;
+(one? 5)    ; #f
+(one? 1)    ; #t
+
+; Rewrite repick function using one?
+;
+(define rempick-one
+  (lambda (n lat)
+    (cond
+      ((one? n)(cdr lat))
+      (else
+       (cons (car lat)(rempick-one (sub1 n)(cdr lat)))))))
+
+; Example of rempick-one;
+;
+(rempick-one 4 '(hotdogs with hot mustard))    ; (hotdogs with hot)
 
 
 
