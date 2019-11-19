@@ -1,0 +1,14 @@
+;
+; Chapter 7 of The Little Schemer 4th:
+; Friends and Relations
+;
+
+; member function from Chapter 2 (02-do-it-again.ss)
+;
+(define member?
+  (lambda (a lat)
+    (cond
+      ((null? lat)#f)
+      (else (or (eq? (car lat) a)
+                (member? a (cdr lat)))))))
+
