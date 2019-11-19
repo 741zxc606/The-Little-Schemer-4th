@@ -246,19 +246,153 @@
                 (8 pears and 6 plums)
                 (and 6 prunes with some apples)))      ; '(6 and)
 
+; The a-pair? function determines if it's a pair
+;
+(define a-pair?
+  (lambda (x)
+    (cond
+      ((atom? x)#f)
+      ((null? x)#f)
+      ((null? (cdr x))#f)
+      ((null? (cdr (cdr x)))#t)
+      (else #f))))
 
+; Examples of pairs
+;
+(a-pair? '(pear pear))        ; #t
+(a-pair? '(3 7))              ; #t
+(a-pair? '((2) (pair)))       ; #t
+(a-pair? '(full (house)))     ; #t
 
+; Examples of not-pairs
+;
+(a-pair? '())                 ; #f
+(a-pair? '(a b c))            ; #f
 
+; Helper function for working with pairs
+;
+(define first
+  (lambda (p)
+    (car p)))
 
+(define second
+  (lambda (p)
+    (car (cdr p))))
 
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 '()))))
 
+; An example of how you'd write third
+;
+(define third
+  (lambda (l)
+    (car (cdr (cdr l)))))
 
+; Examples of not-relations
+;
+'(apples peaches pumpkins pie)
+'((apples peaches)(pumpkins pie)(apples peaches))
 
+; Examples of relations
+;
+'((apples peaches) (pumpkin pie))
+'((4 3)(4 2)(7 6)(6 2)(3 4))
 
+; The fun? function determines if rel is a function
+;
+(define fun?
+  (lambda (rel)
+    (set? (firsts rel))))
 
+; It uses firsts function from Chapter 3 (03-cons-the-magnificent.ss)
+;
+(define firsts
+  (lambda (l)
+    (cond
+      ((null? l)'())
+      (else
+       (cons (car (car l))(firsts (cdr l)))))))
 
+; Examples of fun?
+;
+(fun? '((4 3)(4 2)(7 6)(6 2)(3 4)))        ; #f
+(fun? '((8 3)(4 2)(7 6)(6 2)(3 4)))        ; #t
+(fun? '((d 4)(b 0)(b 9)(e 5)(g 4)))        ; #f
 
+; The reverel function reverses a relation
+;
+(define revrel
+  (lambda (rel)
+    (cond
+      ((null? rel)'())
+      (else (cons(build(second (car rel))
+                       (first (car rel)))
+                 (revrel(cdr rel)))))))
 
+; Example of revrel
+;
+(revrel '((8 a)(pumpkin pie)(got sick)))
+; ==> '((a 8) (pie pumpkin) (sick got))
 
+; Let's simplify revrel by using inventing revpair that reverses a pair
+;
+(define revpair
+  (lambda (p)
+    (build (second p)(first p))))
+
+; Simplified revrel
+;
+(define revrel
+  (lambda (rel)
+    (cond
+      ((null? rel)'())
+      (else (cons(revpair(car rel))(revrel(cdr rel)))))))
+
+; Test of simplified revrel
+;
+(revrel '((8 a)(pumpkin pie)(got sick)))
+; ==> '((a 8) (pie pumpkin) (sick got))
+
+; The fullfun? function determines if the given function is full
+;
+(define fullfun?
+  (lambda (fun)
+    (set?(seconds fun))))
+
+; It uses seconds helper function
+;
+(define seconds
+  (lambda (l)
+    (cond
+      ((null? l)'())
+      (else
+       (cons (second (car l))(seconds(cdr l)))))))
+
+; Examples of fullfun?
+;
+(fullfun? '((8 3)(4 2)(7 6)(6 2)(3 4)))        ; #f
+(fullfun? '((8 3)(4 8)(7 6)(6 2)(3 4)))        ; #t
+(fullfun? '((grape raisin)
+            (plum prune)
+            (stewed prune)))                   ; #f
+
+; one-to-one? is the same as fullfun?
+;
+(define one-to-one?
+  (lambda (fun)
+    (fun? (revrel fun))))
+
+; Examples of one-to-one?
+;
+(one-to-one? '((8 3)(4 2)(7 6)(6 2)(3 4)))        ; #f
+(one-to-one? '((8 3)(4 8)(7 6)(6 2)(3 4)))        ; #t
+(one-to-one? '((grape raisin)
+               (plum prune)
+               (stewed prune)))                   ; #f
+
+(one-to-one? '((chocolate chip)(doughy cookie)))
+; ==> #t
+; and you deserve one now!
 
 
