@@ -134,26 +134,26 @@
     (cond
      ((atom? e)(atom-to-action e))
      (else
-      (atom-to-action e)))))
+      (list-to-action e)))))
 
 ; Atom to action
 ;
 (define atom-to-action
   (lambda(e)
     (cond
-      ((number? e)*const)
-      ((eq? e #t)*const)
-      ((eq? e #f)*const)
-      ((eq? e 'cons)*const)
-      ((eq? e 'car)*const)
-      ((eq? e 'cdr)*const)
-      ((eq? e 'null?)*const)
-      ((eq? e 'eq?)*const)
-      ((eq? e 'atom?)*const)
-      ((eq? e 'zero?)*const)
-      ((eq? e 'add1)*const)
-      ((eq? e 'sub1)*const)
-      ((eq? e 'number?)*const)
+      ((number? e) *const)
+      ((eq? e #t) *const)
+      ((eq? e #f )*const)
+      ((eq? e 'cons) *const)
+      ((eq? e 'car) *const)
+      ((eq? e 'cdr) *const)
+      ((eq? e 'null?) *const)
+      ((eq? e 'eq?) *const)
+      ((eq? e 'atom?) *const)
+      ((eq? e 'zero?) *const)
+      ((eq? e 'add1) *const)
+      ((eq? e 'sub1) *const)
+      ((eq? e 'number?) *const)
       (else *identifier))))
 
 ; List to action
@@ -163,9 +163,9 @@
     (cond
      ((atom?(car e))
       (cond
-        ((eq?(car e)'quote)*quote)
-        ((eq?(car e)'lambda)*lambda)
-        ((eq?(car e)'cond)*cond)
+        ((eq?(car e)'quote) *quote)
+        ((eq?(car e)'lambda) *lambda)
+        ((eq?(car e)'cond) *cond)
         (else *application)))
      (else *application))))
 
@@ -179,16 +179,16 @@
 ;
 (define meaning
   (lambda(e table)
-    ((expression-to-action e)e table)))
+    ((expression-to-action e) e table)))
 
 ; Now the various actions. Let's start with *const
 ;
 (define *const
   (lambda(e table)
     (cond
-      ((number? e)e)
-      ((eq? e #t)#t)
-      ((eq? e #f)#f)
+      ((number? e) e)
+      ((eq? e #t) #t)
+      ((eq? e #f) #f)
       (else
        (build 'primitive e)))))
 
@@ -233,11 +233,11 @@
   (lambda(lines table)
     (cond
       ((else?(question-of(car lines)))
-       (meaning(answer-of (car lines))table))
-      ((meaning(question-of(car lines))table)
-       (meaning(answer-of(car lines))table))
+       (meaning(answer-of (car lines)) table))
+      ((meaning(question-of(car lines)) table)
+       (meaning(answer-of(car lines)) table))
       (else
-       (evcon(cdr lines)table)))))    ; we don't ask null?, better one of cond lines be true!
+       (evcon(cdv lines) table)))))    ; we don't ask null?, better one of cond lines be true!
 
 ; evcon needs else?, question-of and answer-of
 ;
@@ -263,7 +263,7 @@
 (define evlis
   (lambda(args table)
     (cond
-     ((null? args)'())
+     ((null? args)(quote()))
      (else
       (cons(meaning(car args)table)
            (evlis(cdr args)table))))))
@@ -273,8 +273,8 @@
 (define *application
   (lambda(e table)
     (applyz
-     (meaning(function-of e)table)
-     (evlis(arguments-of e)table))))
+     (meaning (function-of e) table)
+     (evlis (arguments-of e) table))))
 
 (define function-of car)
 (define arguments-of cdr)
@@ -289,7 +289,7 @@
 ;
 (define non-primitive?
   (lambda(l)
-    (eq?(first l)'non-primitive)))
+    (eq?(first l) 'non-primitive)))
 
 ; Apply!
 ;
@@ -297,9 +297,11 @@
   (lambda(fun vals)
     (cond
       ((primitive? fun)
-       (apply-primitive(second fun)vals))
+       (apply-primitive
+        (second fun) vals))
       ((non-primitive? fun)
-       (apply-closure(second fun)vals)))))
+       (apply-closure
+        (second fun) vals)))))
 
 ; apply-primitive
 ;
@@ -334,8 +336,10 @@
     (cond
       ((atom? x)#t)
       ((null? x)#f)
-      ((eq? (car x)'primitive)#t)
-      ((eq? (car x)'non-primitive)#t)
+      ((eq? (car x) 'primitive)
+       #t)
+      ((eq? (car x) 'non-primitive)
+       #t)
       (else #f))))
 
 ; apply-closure
@@ -344,31 +348,31 @@
   (lambda(closure vals)
     (meaning
      (body-of closure)
-     (extend-table(new-entry
-                   (formals-of closure)
-                   vals)
-                  (table-of closure)))))
+     (extend-table
+      (new-entry
+        (formals-of closure)
+         vals)
+      (table-of closure)))))
 
 ; Let's try out our brand new scheme interpreter!
 ;
-(value '(add1 6))
+(value '(add1 6))                       ; 7
+(value '(quote(a b c)))                 ; '(a b c)
+(value '(car (quote (a b c))))          ; 'a
+(value '(cdr (quote (a b c))))          ; '(b c)
 
+(value
+ '((lambda(x)
+     (cons x (quote ())))
+   (quote (foo bar baz))))              ; '((foo bar baz))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(value
+ '((lambda(x)
+     (cond
+       (x (quote true))
+       (else
+        (quote false))))
+   #t))                                 ; 'true
 
 
 
